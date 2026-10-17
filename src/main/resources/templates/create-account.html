@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Create Account</title>
+    </head>
+    <body>
+        <h1>Create Account</h1>
+
+        <form th:action="@{/create-account}" th:object="${createUserDto}" method="post">
+
+            <div>
+                <label for="fullName">Nome completo</label>
+                <input type="text" id="fullName" th:field="*{fullName}">
+                <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+            </div>
+
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" th:field="*{email}">
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+
+            <div>
+                <label for="username">Username</label>
+                <input type="text" id="username" th:field="*{username}">
+                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+            </div>
+
+            <div>
+                <label for="password">Senha</label>
+                <input type="password" id="password" th:field="*{password}">
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            </div>
+
+            <div>
+                <label for="confirmPassword">Confirmar senha</label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}">
+                <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+            </div>
+
+            <!-- cross-field validation error -->
+            <div th:if="${#fields.hasErrors('passwordMatching')}" th:errors="*{passwordMatching}"></div>
+
+            <button type="submit">Criar conta</button>
+        </form>
+
+    </body>
+
+</html>

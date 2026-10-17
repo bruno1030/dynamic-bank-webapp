@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <title>Dynamic Bank - Home</title>
+    </head>
+    <body>
+        <h1>Dynamic Bank</h1>
+
+        <a th:href="@{/login}" sec:authorize="isAnonymous()">Login</a>
+
+        <a th:href="@{/transfer-money}" sec:authorize="isAuthenticated()">Efetuar Transferência</a>
+
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+            <button type="submit">Logout</button>
+        </form>
+
+    </body>
+
+</html>
