@@ -1,9 +1,8 @@
 # Dynamic Bank - WebApp
 
-This is the web frontend project of Dynamic Bank.
-It simulates a simple banking application.
+Esse é o projeto frontend para o Dynamic Bank.
 
-The webapp is built with Spring MVC + Thymeleaf and communicates with the Account Service and Transfer Service microservices via REST APIs.
+A webapp é construída com Spring MVC + Thymeleaf, e comunica com os microserviços AccountService e TransferService via REST APIs.
 
 ---
 
