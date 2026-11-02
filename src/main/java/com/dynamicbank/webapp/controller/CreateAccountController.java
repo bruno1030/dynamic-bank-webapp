@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class CreateAccountController {
 
+    // Metodo que abre a tela de criação de conta
     @GetMapping("/create-account")
     public String getCreateAccountPage(Model model){
         model.addAttribute("createUserDto", new CreateUserDto());
         return "create-account";
     }
 
+    // Metodo chamado ao dar submit na tela de criar conta
     @PostMapping("/create-account")
     public String postCreateAccount(CreateUserDto createUserDto){
         return "account-created";
