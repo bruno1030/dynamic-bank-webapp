@@ -8,8 +8,8 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * Configuração de acesso ao AccountService, lida do application.properties:
- *   account-service.base-url  -> URL base do AccountService
- *   account-service.api-key   -> a webapp-key (mesmo valor de security.api-keys.webapp no AccountService)
+ * account-service.base-url  -> URL base do AccountService
+ * account-service.api-key   -> a webapp-key (mesmo valor de security.api-keys.webapp no AccountService)
  */
 
 @Validated
