@@ -14,7 +14,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF fica habilitado (padrão). O Thymeleaf inclui o token no formulário via th:action.
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/home", "/create-account", "/error").permitAll()
+                .requestMatchers("/", "/home", "/login", "/create-account", "dashboard", "/error").permitAll()
                 .anyRequest().authenticated());
 
         return http.build();

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
-/** Corpo enviado ao POST /accounts/create do AccountService (sem confirmPassword). */
+/** Objeto enviado ao POST /accounts/create do AccountService (sem confirmPassword). */
 @Getter
 @AllArgsConstructor
 public class CreateAccountRequestDto {

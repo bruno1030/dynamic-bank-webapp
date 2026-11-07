@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
+/** Objeto com as informações do formulario preenchido pelo cliente */
 @Getter
 @Setter
 public class CreateUserDto {
