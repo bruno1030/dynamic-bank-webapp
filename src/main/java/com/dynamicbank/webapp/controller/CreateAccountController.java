@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -24,13 +25,18 @@ public class CreateAccountController {
     // Metodo que abre a tela de criação de conta
     @GetMapping("/create-account")
     public String getCreateAccountPage(Model model) {
-        model.addAttribute("createUserDto", new CreateUserDto());
+        // Se veio de um redirecionamento com erro, o formulário já está no model (flash).
+        if (!model.containsAttribute("createUserDto")) {
+            model.addAttribute("createUserDto", new CreateUserDto());
+        }
         return "create-account";
     }
 
     // Metodo chamado ao dar submit na tela de criar conta
     @PostMapping("/create-account")
-    public String postCreateAccount(@Valid CreateUserDto createUserDto, BindingResult bindingResult) {
+    public String postCreateAccount(@Valid CreateUserDto createUserDto,
+                                    BindingResult bindingResult,
+                                    RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "create-account";
         }
@@ -39,11 +45,16 @@ public class CreateAccountController {
             registrationService.register(createUserDto);
         } catch (AccountServiceException e) {
             log.warn("Falha ao criar conta no AccountService (status={})", e.getStatus(), e);
-            bindingResult.reject("account.service.error", messageFor(e));
-            return "create-account";
+
+            // As senhas não devem ficar guardadas na sessão, nem por um instante.
+            createUserDto.setPassword(null);
+            createUserDto.setConfirmPassword(null);
+
+            redirectAttributes.addFlashAttribute("createUserDto", createUserDto);
+            redirectAttributes.addFlashAttribute("errorMessage", messageFor(e));
+            return "redirect:/create-account";
         }
 
-        // Post/Redirect/Get. O login automático (JWT na sessão) entra na próxima etapa.
         return "redirect:/dashboard";
     }
 

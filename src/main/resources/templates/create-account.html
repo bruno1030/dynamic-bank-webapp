@@ -48,6 +48,7 @@
     <div th:if="${#fields.hasErrors('passwordMatching')}" th:errors="*{passwordMatching}"></div>
 
     <button type="submit">Criar conta</button>
+    <div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
 </form>
 
 </body>

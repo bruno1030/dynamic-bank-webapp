@@ -24,13 +24,19 @@ public class AccountServiceClient {
 
     public AuthResponseDto createAccount(CreateAccountRequestDto request) {
         try {
-            return restClient.post()
+            AuthResponseDto response = restClient.post()
                     .uri("/accounts/create")
                     .header(API_KEY_HEADER, properties.getApiKey())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(request)
                     .retrieve()
                     .body(AuthResponseDto.class);
+
+            if (response == null || response.getToken() == null || response.getToken().isBlank() || response.getUser() == null) {
+                throw new AccountServiceException("Resposta inválida do AccountService", 502, null);
+            }
+
+            return response;
         } catch (RestClientResponseException e) {
             // O AccountService respondeu com 4xx ou 5xx.
             int status = e.getStatusCode().value();
