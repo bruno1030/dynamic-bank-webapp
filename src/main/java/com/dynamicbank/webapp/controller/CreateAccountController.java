@@ -1,8 +1,12 @@
 package com.dynamicbank.webapp.controller;
 
 import com.dynamicbank.webapp.client.AccountServiceException;
+import com.dynamicbank.webapp.client.dto.AuthResponseDto;
 import com.dynamicbank.webapp.dto.CreateUserDto;
+import com.dynamicbank.webapp.security.LoginSessionManager;
 import com.dynamicbank.webapp.service.AccountRegistrationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -17,12 +21,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CreateAccountController {
 
     private final AccountRegistrationService registrationService;
+    private final LoginSessionManager loginSessionManager;
 
-    public CreateAccountController(AccountRegistrationService registrationService) {
+    public CreateAccountController(AccountRegistrationService registrationService,
+                                   LoginSessionManager loginSessionManager) {
         this.registrationService = registrationService;
+        this.loginSessionManager = loginSessionManager;
     }
 
-    // Metodo que abre a tela de criação de conta
     @GetMapping("/create-account")
     public String getCreateAccountPage(Model model) {
         // Se veio de um redirecionamento com erro, o formulário já está no model (flash).
@@ -36,13 +42,16 @@ public class CreateAccountController {
     @PostMapping("/create-account")
     public String postCreateAccount(@Valid CreateUserDto createUserDto,
                                     BindingResult bindingResult,
-                                    RedirectAttributes redirectAttributes) {
+                                    RedirectAttributes redirectAttributes,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "create-account";
         }
 
+        AuthResponseDto authResponse;
         try {
-            registrationService.register(createUserDto);
+            authResponse = registrationService.register(createUserDto);
         } catch (AccountServiceException e) {
             log.warn("Falha ao criar conta no AccountService (status={})", e.getStatus(), e);
 
@@ -54,6 +63,9 @@ public class CreateAccountController {
             redirectAttributes.addFlashAttribute("errorMessage", messageFor(e));
             return "redirect:/create-account";
         }
+
+        // Conta criada: o usuário já fica logado (JWT guardado na sessão).
+        loginSessionManager.establish(authResponse, request, response);
 
         return "redirect:/dashboard";
     }

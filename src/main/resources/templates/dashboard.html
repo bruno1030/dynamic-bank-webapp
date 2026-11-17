@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Logged Page</title>
+    </head>
+    <body>
+        <h1>Olá, <span th:text="${fullName}">fulano</span></h1>
+
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/transfer-money}">Transfer money</a>
+    </body>
+</html>
