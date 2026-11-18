@@ -1,13 +1,75 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Transfer money</title>
-    </head>
-    <body>
-        <h1>Transfer money</h1>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Transfer money</title>
+</head>
+<body>
+<h1>Transferir dinheiro</h1>
 
-    <a href="home">Home</a>
-    <a href="create-account">Create account</a>
+<!-- Mensagens vindas do controller (flash attributes) -->
+<div th:if="${successMessage}" style="color: green;" th:text="${successMessage}"></div>
+<div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div>
 
+<!-- Passo 1: buscar a conta de destino (por apenas UM dos campos) -->
+<h2>1. Conta de destino</h2>
+<form th:action="@{/transfer-money/search}" th:object="${searchAccountDto}" method="post">
+    <p>Pesquise por apenas um dos campos:</p>
+
+    <div>
+        <label for="username">Username (mínimo 3 caracteres)</label>
+        <input type="text" id="username" th:field="*{username}">
+        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+    </div>
+
+    <div>
+        <label for="email">Email (completo)</label>
+        <input type="email" id="email" th:field="*{email}">
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    </div>
+
+    <!-- erro de regra entre os dois campos -->
+    <div th:if="${#fields.hasErrors('exactlyOneFilled')}" th:errors="*{exactlyOneFilled}"></div>
+
+    <button type="submit">Buscar</button>
+</form>
+
+<!-- Resultado da busca: só aparece depois de buscar -->
+<div th:if="${accounts != null and #lists.isEmpty(accounts)}">
+    <p>Nenhuma conta encontrada.</p>
+</div>
+
+<!-- Passo 2: escolher a conta, informar o valor e transferir -->
+<div th:if="${accounts != null and !#lists.isEmpty(accounts)}">
+    <h2>2. Valor</h2>
+
+    <form th:action="@{/transfer-money}" th:object="${transferDto}" method="post">
+
+        <!-- Chave de idempotência: gerada pela webapp ao abrir a tela -->
+        <input type="hidden" th:field="*{transferId}">
+
+        <div>
+            <p>Escolha a conta de destino:</p>
+            <div th:each="account : ${accounts}">
+                <input type="radio" th:field="*{toAccountId}" th:value="${account.accountId}">
+                <label th:for="${#ids.prev('toAccountId')}"
+                       th:text="${account.fullName + ' (' + account.username + ')'}"></label>
+            </div>
+            <div th:if="${#fields.hasErrors('toAccountId')}" th:errors="*{toAccountId}"></div>
+        </div>
+
+        <div>
+            <label for="amount">Valor (R$)</label>
+            <input type="number" id="amount" step="0.01" min="0.01" th:field="*{amount}">
+            <div th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+        </div>
+
+        <button type="submit">Transferir</button>
+    </form>
+</div>
+
+<p>
+    <a th:href="@{/dashboard}">Voltar ao dashboard</a>
+    <a th:href="@{/home}">Home</a>
+</p>
+</body>
 </html>
